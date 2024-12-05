@@ -1,12 +1,21 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import schedule from "node-schedule";
 
 import * as dotenv from "dotenv";
 
 dotenv.config();
 puppeteer.use(StealthPlugin());
 
-(async () => {
+// // Schedule the job three times a day
+// const job1 = schedule.scheduleJob("0 6 * * *", check); // 6:00 AM
+// const job2 = schedule.scheduleJob("0 14 * * *", check); // 2:00 PM
+// const job3 = schedule.scheduleJob("0 22 * * *", check); // 10:00 PM
+
+const job3 = schedule.scheduleJob("*/1 * * * *", check); // 10:00 PM
+
+
+async function check() {
   // Launch a new browser instance
   const browser = await puppeteer.launch({
     defaultViewport: null,
@@ -59,13 +68,13 @@ puppeteer.use(StealthPlugin());
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
       (checkboxes) => {
         return checkboxes.map((checkbox) => {
-          if(!checkbox.checked){
-            checkbox.checked = true
+          if (!checkbox.checked) {
+            checkbox.checked = true;
           }
-        })
+        });
       }
     );
-    
+
     const checkedStatus2 = await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
       (checkboxes) => {
@@ -75,9 +84,8 @@ puppeteer.use(StealthPlugin());
       }
     );
     console.log(checkedStatus2);
-    
 
-    await page.click(".fc-myCustomButton-button.fc-button.fc-button-primary")
+    await page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
 
     // Print the result for each checkbox
     // checkedStatus.forEach((item) => {
@@ -100,9 +108,9 @@ puppeteer.use(StealthPlugin());
 
   // Optionally close the browser
   await browser.close();
-})();
 
-// General-purpose wait function
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  // General-purpose wait function
+  function wait(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }
