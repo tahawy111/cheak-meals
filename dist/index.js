@@ -89,7 +89,7 @@ puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
         //     }));
         //   }
         // );
-        const checkedStatus = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+        yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
             return checkboxes.map((checkbox) => {
                 if (!checkbox.checked) {
                     checkbox.checked = true;

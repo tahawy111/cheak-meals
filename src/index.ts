@@ -55,7 +55,7 @@ puppeteer.use(StealthPlugin());
     //     }));
     //   }
     // );
-    const checkedStatus = await page.$$eval(
+    await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
       (checkboxes) => {
         return checkboxes.map((checkbox) => {
