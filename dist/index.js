@@ -54,8 +54,9 @@ puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
     // Launch a new browser instance
     const browser = yield puppeteer_extra_1.default.launch({
         defaultViewport: null,
-        headless: false,
+        headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+        timeout: 0,
     });
     // Open a new page
     const page = yield browser.newPage();
@@ -75,18 +76,41 @@ puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
         yield page.click("#sidebar-menu > ul > li:nth-child(4) > a");
         yield page.click("a#getMeals", { delay: 1000 });
         yield page.click("a#getMeals");
-        // await page.click("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label")
-        const checkedStatus = yield page.$$eval('table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input', checkboxes => {
-            return checkboxes.map(checkbox => ({
-                id: checkbox.id, // Or any other attribute like name
-                checked: checkbox.checked
+        // await wait(2000);
+        yield page.waitForSelector("table", { timeout: 0 });
+        // await page.click("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future:nth-child(1) div.fc-daygrid-day-bg label")
+        // const query = await page.$("table");
+        // console.log(await query?.evaluate((el) => el.innerHTML));
+        // const checkedStatus = await page.$$eval(
+        //   "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
+        //   (checkboxes) => {
+        //     return checkboxes.map((checkbox) => ({
+        //       checked: checkbox.checked,
+        //     }));
+        //   }
+        // );
+        const checkedStatus = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+            return checkboxes.map((checkbox) => {
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                }
+            });
+        });
+        const checkedStatus2 = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+            return checkboxes.map((checkbox) => ({
+                checked: checkbox.checked,
             }));
         });
-        console.log(checkedStatus);
+        console.log(checkedStatus2);
+        yield page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
         // Print the result for each checkbox
-        checkedStatus.forEach(item => {
-            console.log(`Checkbox with ID ${item.id} is ${item.checked ? 'checked' : 'not checked'}.`);
-        });
+        // checkedStatus.forEach((item) => {
+        //   console.log(
+        //     `Checkbox with ID ${item.id} is ${
+        //       item.checked ? "checked" : "not checked"
+        //     }.`
+        //   );
+        // });
         // const bodyHTML = await page.evaluate(() => document.body.innerHTML);
         // console.log(bodyHTML);
         yield page.screenshot({
@@ -98,7 +122,7 @@ puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
         console.error("Error navigating to the page:", error);
     }
     // Optionally close the browser
-    // await browser.close();
+    yield browser.close();
 }))();
 // General-purpose wait function
 function wait(ms) {
