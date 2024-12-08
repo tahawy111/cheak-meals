@@ -103,23 +103,13 @@ function check() {
                     }
                 });
             });
-            const checkedStatus2 = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+            const checkedStatus = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
                 return checkboxes.map((checkbox) => ({
                     checked: checkbox.checked,
                 }));
             });
-            console.log(checkedStatus2);
+            console.log(checkedStatus);
             yield page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
-            // Print the result for each checkbox
-            // checkedStatus.forEach((item) => {
-            //   console.log(
-            //     `Checkbox with ID ${item.id} is ${
-            //       item.checked ? "checked" : "not checked"
-            //     }.`
-            //   );
-            // });
-            // const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-            // console.log(bodyHTML);
             yield page.screenshot({
                 path: "screenshot.png", // File name
                 fullPage: true, // Capture the entire page

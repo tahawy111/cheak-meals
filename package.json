@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node-schedule": "^2.1.7",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "typescript": "^5.7.2"
   }
 }

@@ -14,7 +14,6 @@ puppeteer.use(StealthPlugin());
 
 const job3 = schedule.scheduleJob("*/1 * * * *", check); // 10:00 PM
 
-
 async function check() {
   // Launch a new browser instance
   const browser = await puppeteer.launch({
@@ -66,8 +65,8 @@ async function check() {
     // );
     await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
-      (checkboxes) => {
-        return checkboxes.map((checkbox) => {
+      (checkboxes: HTMLInputElement[]) => {
+        return checkboxes.map((checkbox: HTMLInputElement) => {
           if (!checkbox.checked) {
             checkbox.checked = true;
           }
@@ -75,33 +74,17 @@ async function check() {
       }
     );
 
-    const checkedStatus2 = await page.$$eval(
+    const checkedStatus = await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
-      (checkboxes) => {
-        return checkboxes.map((checkbox) => ({
+      (checkboxes: HTMLInputElement[]) => {
+        return checkboxes.map((checkbox: HTMLInputElement) => ({
           checked: checkbox.checked,
         }));
       }
     );
-    console.log(checkedStatus2);
+    console.log(checkedStatus);
 
     await page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
-
-    // Print the result for each checkbox
-    // checkedStatus.forEach((item) => {
-    //   console.log(
-    //     `Checkbox with ID ${item.id} is ${
-    //       item.checked ? "checked" : "not checked"
-    //     }.`
-    //   );
-    // });
-
-    // const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-    // console.log(bodyHTML);
-    await page.screenshot({
-      path: "screenshot.png", // File name
-      fullPage: true, // Capture the entire page
-    });
   } catch (error) {
     console.error("Error navigating to the page:", error);
   }
