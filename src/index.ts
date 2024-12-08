@@ -92,8 +92,8 @@ async function check() {
   // Optionally close the browser
   await browser.close();
 
-  // General-purpose wait function
-  function wait(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // // General-purpose wait function
+  // function wait(ms: number) {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
 }
