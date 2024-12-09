@@ -103,26 +103,32 @@ function check() {
                     }
                 });
             });
-            const checkedStatus = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+            const checkedStatus2 = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
                 return checkboxes.map((checkbox) => ({
                     checked: checkbox.checked,
                 }));
             });
-            console.log(checkedStatus);
+            console.log(checkedStatus2);
             yield page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
-            yield page.screenshot({
-                path: "screenshot.png", // File name
-                fullPage: true, // Capture the entire page
-            });
+            // Print the result for each checkbox
+            // checkedStatus.forEach((item) => {
+            //   console.log(
+            //     `Checkbox with ID ${item.id} is ${
+            //       item.checked ? "checked" : "not checked"
+            //     }.`
+            //   );
+            // });
+            // const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+            // console.log(bodyHTML);
+            // await page.screenshot({
+            //   path: "screenshot.png", // File name
+            //   fullPage: true, // Capture the entire page
+            // });
         }
         catch (error) {
             console.error("Error navigating to the page:", error);
         }
         // Optionally close the browser
         yield browser.close();
-        // General-purpose wait function
-        function wait(ms) {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-        }
     });
 }
