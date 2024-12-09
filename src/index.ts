@@ -25,10 +25,13 @@ const MAX_RETRIES = 3; // Maximum number of retries
 const job1 = schedule.scheduleJob("0 6 * * *", () => {
   executeWithRetry(check, MAX_RETRIES);
 }); // 6:00 AM
-const job2 = schedule.scheduleJob("0 14 * * *", () => {
+const job2 = schedule.scheduleJob("15 11 * * *", () => {
+  executeWithRetry(check, MAX_RETRIES);
+}); // 11:15 AM
+const job3 = schedule.scheduleJob("0 14 * * *", () => {
   executeWithRetry(check, MAX_RETRIES);
 }); // 2:00 PM
-const job3 = schedule.scheduleJob("0 22 * * *", () => {
+const job4 = schedule.scheduleJob("0 22 * * *", () => {
   executeWithRetry(check, MAX_RETRIES);
 }); // 10:00 PM
 
@@ -84,7 +87,7 @@ async function check(): Promise<void> {
 
     console.log("Navigation successful.");
 
-    await page.type('input[name="txtStudentID"]', "30601310201497");
+    await page.type('input[name="txtStudentID"]', `${process.env.NID}`);
     await page.type('input[name="txtStudentPassword"]', `${process.env.PASS}`);
 
     await page.click(".account-btn");
