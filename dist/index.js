@@ -51,23 +51,52 @@ const node_schedule_1 = __importDefault(require("node-schedule"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
-// // Schedule the job three times a day
-// const job1 = schedule.scheduleJob("0 6 * * *", check); // 6:00 AM
-// const job2 = schedule.scheduleJob("0 14 * * *", check); // 2:00 PM
-// const job3 = schedule.scheduleJob("0 22 * * *", check); // 10:00 PM
-const job3 = node_schedule_1.default.scheduleJob("*/1 * * * *", check); // 10:00 PM
+const MAX_RETRIES = 3; // Maximum number of retries
+// Schedule the job
+const job = node_schedule_1.default.scheduleJob("*/1 * * * *", () => {
+    executeWithRetry(check, MAX_RETRIES);
+});
+/**
+ * Retry wrapper for the function to handle retries on failure
+ * @param fn - The function to execute
+ * @param retries - Maximum number of retries
+ */
+function executeWithRetry(fn, retries) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let attempt = 0;
+        while (attempt < retries) {
+            try {
+                console.log(`Attempt ${attempt + 1} of ${retries}`);
+                yield fn();
+                console.log("Function executed successfully.");
+                return; // Exit if successful
+            }
+            catch (error) {
+                attempt++;
+                console.error(`Error on attempt ${attempt}:`, error);
+                if (attempt >= retries) {
+                    console.error("Max retries reached. Aborting.");
+                    return; // Stop retrying
+                }
+                else {
+                    console.log("Retrying...");
+                }
+            }
+        }
+    });
+}
+/**
+ * Main check function to execute Puppeteer automation
+ */
 function check() {
     return __awaiter(this, void 0, void 0, function* () {
-        // Launch a new browser instance
         const browser = yield puppeteer_extra_1.default.launch({
             defaultViewport: null,
             headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
             timeout: 0,
         });
-        // Open a new page
         const page = yield browser.newPage();
-        // Navigate to the given URL
         const url = "https://al-zahraa.mans.edu.eg/studentLogin";
         try {
             console.log(`Navigating to ${url}...`);
@@ -83,19 +112,7 @@ function check() {
             yield page.click("#sidebar-menu > ul > li:nth-child(4) > a");
             yield page.click("a#getMeals", { delay: 1000 });
             yield page.click("a#getMeals");
-            // await wait(2000);
             yield page.waitForSelector("table", { timeout: 0 });
-            // await page.click("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future:nth-child(1) div.fc-daygrid-day-bg label")
-            // const query = await page.$("table");
-            // console.log(await query?.evaluate((el) => el.innerHTML));
-            // const checkedStatus = await page.$$eval(
-            //   "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
-            //   (checkboxes) => {
-            //     return checkboxes.map((checkbox) => ({
-            //       checked: checkbox.checked,
-            //     }));
-            //   }
-            // );
             yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
                 return checkboxes.map((checkbox) => {
                     if (!checkbox.checked) {
@@ -103,32 +120,21 @@ function check() {
                     }
                 });
             });
-            const checkedStatus2 = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
+            const checkedStatus = yield page.$$eval("table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input", (checkboxes) => {
                 return checkboxes.map((checkbox) => ({
+                    date: new Date().toLocaleString("en-ca"),
                     checked: checkbox.checked,
                 }));
             });
-            console.log(checkedStatus2);
+            console.log(checkedStatus);
             yield page.click(".fc-myCustomButton-button.fc-button.fc-button-primary");
-            // Print the result for each checkbox
-            // checkedStatus.forEach((item) => {
-            //   console.log(
-            //     `Checkbox with ID ${item.id} is ${
-            //       item.checked ? "checked" : "not checked"
-            //     }.`
-            //   );
-            // });
-            // const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-            // console.log(bodyHTML);
-            // await page.screenshot({
-            //   path: "screenshot.png", // File name
-            //   fullPage: true, // Capture the entire page
-            // });
         }
         catch (error) {
-            console.error("Error navigating to the page:", error);
+            console.error("Error during execution:", error);
+            throw error; // Propagate error for retry logic
         }
-        // Optionally close the browser
-        yield browser.close();
+        finally {
+            yield browser.close();
+        }
     });
 }
