@@ -31,4 +31,6 @@ RUN npm install
 COPY src /app/src
 COPY . .
 
+EXPOSE 8000
+
 CMD [ "npm", "start" ]

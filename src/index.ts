@@ -2,6 +2,15 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import schedule from "node-schedule";
 import * as dotenv from "dotenv";
+import express, { Request, Response } from 'express';
+
+const app = express();
+
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).send('OK');
+});
+
 
 dotenv.config();
 puppeteer.use(StealthPlugin());
@@ -118,3 +127,8 @@ async function check(): Promise<void> {
     await browser.close();
   }
 }
+
+const port: number = parseInt(process.env.PORT || '8000', 10);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Health check server listening on port ${port}`);
+});
