@@ -18,7 +18,7 @@ puppeteer.use(StealthPlugin());
 const MAX_RETRIES = 3; // Maximum number of retries
 
 // Schedule the job
-const job = schedule.scheduleJob("0 */8 * * *", () => {
+schedule.scheduleJob("0 */8 * * *", () => {
   executeWithRetry(check, MAX_RETRIES);
 }); // Every 1 Minute
 
