@@ -13,12 +13,12 @@
     "node-schedule": "^2.1.1",
     "puppeteer": "^23.10.1",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node-schedule": "^2.1.7",
-    "dotenv": "^16.4.7",
-    "typescript": "^5.7.2"
+    "dotenv": "^16.4.7"
   }
 }

@@ -59,12 +59,8 @@ dotenv.config();
 puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
 const MAX_RETRIES = 3; // Maximum number of retries
 // Schedule the job
-// const job = schedule.scheduleJob("*/1 * * * *", () => {
-//   executeWithRetry(check, MAX_RETRIES);
-// }); // Every 1 Minute
-const job1 = node_schedule_1.default.scheduleJob("0 6 * * *", () => {
+node_schedule_1.default.scheduleJob("0 */8 * * *", () => {
     executeWithRetry(check, MAX_RETRIES);
-<<<<<<< HEAD
 }); // Every 1 Minute
 // const job1 = schedule.scheduleJob("0 6 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
@@ -74,16 +70,7 @@ const job1 = node_schedule_1.default.scheduleJob("0 6 * * *", () => {
 // }); // 2:00 PM
 // const job3 = schedule.scheduleJob("45 4 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
-// }); // 10:00 PM
-=======
-}); // 6:00 AM
-const job2 = node_schedule_1.default.scheduleJob("0 14 * * *", () => {
-    executeWithRetry(check, MAX_RETRIES);
-}); // 2:00 PM
-const job3 = node_schedule_1.default.scheduleJob("0 22 * * *", () => {
-    executeWithRetry(check, MAX_RETRIES);
-}); // 10:00 PM
->>>>>>> 984d3aa5c68c8c5637a645fb4cbb021489fbcb07
+// }); // Every 1 Minute
 /**
  * Retry wrapper for the function to handle retries on failure
  * @param fn - The function to execute
@@ -131,7 +118,7 @@ function check() {
             yield page.goto(url, { waitUntil: "networkidle2" });
             yield page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
             console.log("Navigation successful.");
-            yield page.type('input[name="txtStudentID"]', "30601310201497");
+            yield page.type('input[name="txtStudentID"]', `${process.env.NID}`);
             yield page.type('input[name="txtStudentPassword"]', `${process.env.PASS}`);
             yield page.click(".account-btn");
             yield page.waitForNavigation();
