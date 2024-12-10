@@ -18,19 +18,19 @@ puppeteer.use(StealthPlugin());
 const MAX_RETRIES = 3; // Maximum number of retries
 
 // Schedule the job
-// const job = schedule.scheduleJob("*/1 * * * *", () => {
-//   executeWithRetry(check, MAX_RETRIES);
-// }); // Every 1 Minute
+const job = schedule.scheduleJob("0 */8 * * *", () => {
+  executeWithRetry(check, MAX_RETRIES);
+}); // Every 1 Minute
 
-const job1 = schedule.scheduleJob("0 6 * * *", () => {
-  executeWithRetry(check, MAX_RETRIES);
-}); // 6:00 AM
-const job2 = schedule.scheduleJob("0 14 * * *", () => {
-  executeWithRetry(check, MAX_RETRIES);
-}); // 2:00 PM
-const job3 = schedule.scheduleJob("0 22 * * *", () => {
-  executeWithRetry(check, MAX_RETRIES);
-}); // 10:00 PM
+// const job1 = schedule.scheduleJob("0 6 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 6:00 AM
+// const job2 = schedule.scheduleJob("46 4 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 2:00 PM
+// const job3 = schedule.scheduleJob("45 4 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 10:00 PM
 
 
 /**

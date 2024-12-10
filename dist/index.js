@@ -49,13 +49,28 @@ const puppeteer_extra_1 = __importDefault(require("puppeteer-extra"));
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const dotenv = __importStar(require("dotenv"));
+const express_1 = __importDefault(require("express"));
+const app = (0, express_1.default)();
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
 dotenv.config();
 puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
 const MAX_RETRIES = 3; // Maximum number of retries
 // Schedule the job
 const job = node_schedule_1.default.scheduleJob("*/1 * * * *", () => {
     executeWithRetry(check, MAX_RETRIES);
-});
+}); // Every 1 Minute
+// const job1 = schedule.scheduleJob("0 6 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 6:00 AM
+// const job2 = schedule.scheduleJob("46 4 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 2:00 PM
+// const job3 = schedule.scheduleJob("45 4 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // 10:00 PM
 /**
  * Retry wrapper for the function to handle retries on failure
  * @param fn - The function to execute
@@ -138,3 +153,7 @@ function check() {
         }
     });
 }
+const port = parseInt(process.env.PORT || '8000', 10);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Health check server listening on port ${port}`);
+});
