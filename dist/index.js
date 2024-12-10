@@ -59,8 +59,12 @@ dotenv.config();
 puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
 const MAX_RETRIES = 3; // Maximum number of retries
 // Schedule the job
-const job = node_schedule_1.default.scheduleJob("*/1 * * * *", () => {
+// const job = schedule.scheduleJob("*/1 * * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // Every 1 Minute
+const job1 = node_schedule_1.default.scheduleJob("0 6 * * *", () => {
     executeWithRetry(check, MAX_RETRIES);
+<<<<<<< HEAD
 }); // Every 1 Minute
 // const job1 = schedule.scheduleJob("0 6 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
@@ -71,6 +75,15 @@ const job = node_schedule_1.default.scheduleJob("*/1 * * * *", () => {
 // const job3 = schedule.scheduleJob("45 4 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
 // }); // 10:00 PM
+=======
+}); // 6:00 AM
+const job2 = node_schedule_1.default.scheduleJob("0 14 * * *", () => {
+    executeWithRetry(check, MAX_RETRIES);
+}); // 2:00 PM
+const job3 = node_schedule_1.default.scheduleJob("0 22 * * *", () => {
+    executeWithRetry(check, MAX_RETRIES);
+}); // 10:00 PM
+>>>>>>> 984d3aa5c68c8c5637a645fb4cbb021489fbcb07
 /**
  * Retry wrapper for the function to handle retries on failure
  * @param fn - The function to execute

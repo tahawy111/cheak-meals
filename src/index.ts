@@ -30,7 +30,7 @@ const job = schedule.scheduleJob("0 */8 * * *", () => {
 // }); // 2:00 PM
 // const job3 = schedule.scheduleJob("45 4 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
-// }); // 10:00 PM
+// }); // Every 1 Minute
 
 
 /**
@@ -84,7 +84,7 @@ async function check(): Promise<void> {
 
     console.log("Navigation successful.");
 
-    await page.type('input[name="txtStudentID"]', "30601310201497");
+    await page.type('input[name="txtStudentID"]', `${process.env.NID}`);
     await page.type('input[name="txtStudentPassword"]', `${process.env.PASS}`);
 
     await page.click(".account-btn");
