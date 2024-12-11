@@ -45,23 +45,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const puppeteer_extra_1 = __importDefault(require("puppeteer-extra"));
-const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
-const node_schedule_1 = __importDefault(require("node-schedule"));
+// import puppeteer from "puppeteer-extra";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// import schedule from "node-schedule";
+const chrome_aws_lambda_1 = __importDefault(require("chrome-aws-lambda"));
 const dotenv = __importStar(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).send('OK');
-});
-dotenv.config();
-puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
 const MAX_RETRIES = 3; // Maximum number of retries
+// Health check endpoint
+app.get('/check', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield executeWithRetry(check, MAX_RETRIES);
+        res.status(200).send('OK');
+    }
+    catch (error) {
+        res.status(400).send('Error while checking meals.');
+    }
+}));
+dotenv.config();
+// puppeteer.use(StealthPlugin());
 // Schedule the job
-node_schedule_1.default.scheduleJob("0 */8 * * *", () => {
-    executeWithRetry(check, MAX_RETRIES);
-}); // Every 1 Minute
+// schedule.scheduleJob("0 */8 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // Every 1 Minute
 // const job1 = schedule.scheduleJob("0 6 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
 // }); // 6:00 AM
@@ -105,7 +112,7 @@ function executeWithRetry(fn, retries) {
  */
 function check() {
     return __awaiter(this, void 0, void 0, function* () {
-        const browser = yield puppeteer_extra_1.default.launch({
+        const browser = yield chrome_aws_lambda_1.default.puppeteer.launch({
             defaultViewport: null,
             headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
