@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js"
+    "start": "npx puppeteer browsers install chrome && tsc && node dist/index.js"
   },
   "author": "",
   "license": "ISC",
