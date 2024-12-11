@@ -7,8 +7,13 @@ import express, { Request, Response } from 'express';
 const app = express();
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).send('OK');
+app.get('/check', async (req: Request, res: Response) => {
+  try {
+    await executeWithRetry(check, MAX_RETRIES);
+    res.status(200).send('OK');
+  } catch (error) {
+    res.status(400).send('Error while checking meals.');
+  }
 });
 
 
@@ -18,9 +23,9 @@ puppeteer.use(StealthPlugin());
 const MAX_RETRIES = 3; // Maximum number of retries
 
 // Schedule the job
-schedule.scheduleJob("0 */8 * * *", () => {
-  executeWithRetry(check, MAX_RETRIES);
-}); // Every 1 Minute
+// schedule.scheduleJob("0 */8 * * *", () => {
+//   executeWithRetry(check, MAX_RETRIES);
+// }); // Every 1 Minute
 
 // const job1 = schedule.scheduleJob("0 6 * * *", () => {
 //   executeWithRetry(check, MAX_RETRIES);
