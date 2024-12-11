@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import express, { Request, Response } from 'express';
 
 const app = express();
+const MAX_RETRIES = 3; // Maximum number of retries
 
 // Health check endpoint
 app.get('/check', async (req: Request, res: Response) => {
@@ -20,7 +21,6 @@ app.get('/check', async (req: Request, res: Response) => {
 dotenv.config();
 puppeteer.use(StealthPlugin());
 
-const MAX_RETRIES = 3; // Maximum number of retries
 
 // Schedule the job
 // schedule.scheduleJob("0 */8 * * *", () => {
