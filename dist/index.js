@@ -48,7 +48,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // import puppeteer from "puppeteer-extra";
 // import StealthPlugin from "puppeteer-extra-plugin-stealth";
 // import schedule from "node-schedule";
-const chrome_aws_lambda_1 = __importDefault(require("chrome-aws-lambda"));
+const chromium_1 = __importDefault(require("@sparticuz/chromium"));
+const puppeteer_core_1 = __importDefault(require("puppeteer-core"));
 const dotenv = __importStar(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
@@ -112,11 +113,12 @@ function executeWithRetry(fn, retries) {
  */
 function check() {
     return __awaiter(this, void 0, void 0, function* () {
-        const browser = yield chrome_aws_lambda_1.default.puppeteer.launch({
+        const browser = yield puppeteer_core_1.default.launch({
+            args: chromium_1.default.args,
             defaultViewport: null,
-            headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
             timeout: 0,
+            executablePath: yield chromium_1.default.executablePath(),
+            headless: chromium_1.default.headless,
         });
         const page = yield browser.newPage();
         const url = "https://al-zahraa.mans.edu.eg/studentLogin";

@@ -1,7 +1,8 @@
 // import puppeteer from "puppeteer-extra";
 // import StealthPlugin from "puppeteer-extra-plugin-stealth";
 // import schedule from "node-schedule";
-import Chromium from "chrome-aws-lambda";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import * as dotenv from "dotenv";
 import express, { Request, Response } from 'express';
 
@@ -71,11 +72,12 @@ async function executeWithRetry(fn: () => Promise<void>, retries: number): Promi
  * Main check function to execute Puppeteer automation
  */
 async function check(): Promise<void> {
-  const browser = await Chromium.puppeteer.launch({
+  const browser = await puppeteer.launch({
+    args: chromium.args,
     defaultViewport: null,
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
     timeout: 0,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   });
 
   const page = await browser.newPage();
