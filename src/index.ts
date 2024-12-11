@@ -1,6 +1,8 @@
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import schedule from "node-schedule";
+// import puppeteer from "puppeteer-extra";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// import schedule from "node-schedule";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import * as dotenv from "dotenv";
 import express, { Request, Response } from 'express';
 
@@ -19,7 +21,7 @@ app.get('/check', async (req: Request, res: Response) => {
 
 
 dotenv.config();
-puppeteer.use(StealthPlugin());
+// puppeteer.use(StealthPlugin());
 
 
 // Schedule the job
@@ -71,10 +73,11 @@ async function executeWithRetry(fn: () => Promise<void>, retries: number): Promi
  */
 async function check(): Promise<void> {
   const browser = await puppeteer.launch({
+    args: chromium.args,
     defaultViewport: null,
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
     timeout: 0,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   });
 
   const page = await browser.newPage();
@@ -105,7 +108,7 @@ async function check(): Promise<void> {
     await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
       (checkboxes) => {
-        return checkboxes.map((checkbox) => {
+        return (checkboxes as HTMLInputElement[]).map((checkbox) => {
           if (!checkbox.checked) {
             checkbox.checked = true;
           }
@@ -116,7 +119,7 @@ async function check(): Promise<void> {
     const checkedStatus = await page.$$eval(
       "table table.fc-scrollgrid-sync-table > tbody td.fc-day-future div.fc-daygrid-day-bg label > input",
       (checkboxes) => {
-        return checkboxes.map((checkbox) => ({
+        return (checkboxes as HTMLInputElement[]).map((checkbox) => ({
           date: new Date().toLocaleString("en-ca"),
           checked: checkbox.checked,
         }));
